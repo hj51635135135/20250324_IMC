@@ -1,0 +1,2529 @@
+<html>
+    <head>
+    
+<style>
+:root {
+  --primary-color: #4361ee;
+  --secondary-color: #3f37c9;
+  --background-color: #f8f9fa;
+  --text-color: #333;
+  --border-color: #e0e0e0;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --border-radius: 8px;
+  --transition: all 0.3s ease;
+}
+
+body {
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  margin: 0;
+  padding: 20px;
+}
+
+/* 제목 스타일 */
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--primary-color);
+  font-weight: 600;
+  padding-bottom: 10px;
+  position: relative;
+}
+
+h2:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background-color: var(--primary-color);
+  border-radius: 2px;
+}
+
+/* 입력 필드 스타일 */
+input {
+  width: 60%;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  font-size: 16px;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+}
+
+/* 테이블 스타일 */
+table {
+  width: 85%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 0 auto 30px;
+  font-size: 15px;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+th, td {
+  border: none;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+th {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+tr:nth-child(even) {
+  background-color: rgba(67, 97, 238, 0.04);
+}
+
+tr:nth-child(odd) {
+  background-color: white;
+}
+
+tr:hover {
+  background-color: rgba(67, 97, 238, 0.08);
+  transition: var(--transition);
+}
+
+td {
+  border-bottom: 1px solid var(--border-color);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+/* 팝업 스타일 */
+.popup {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  transition: var(--transition);
+}
+
+.popup-content {
+  background-color: white;
+  margin: 10% auto;
+  padding: 25px;
+  border: none;
+  border-radius: var(--border-radius);
+  width: 40%;
+  max-width: 550px;
+  font-size: 15px;
+  max-height: 70%;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: fade-in 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.close {
+  color: var(--text-color);
+  float: right;
+  font-size: 22px;
+  font-weight: normal;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.close:hover {
+  color: var(--primary-color);
+  background-color: rgba(67, 97, 238, 0.1);
+}
+
+.popup-content p {
+  margin: 10px 0;
+  line-height: 1.7;
+}
+</style>
+
+    <script>
+        function openPopup(id) {
+            document.getElementById(id).style.display = "block";
+        }
+        function closePopup(id) {
+            document.getElementById(id).style.display = "none";
+        }
+        
+        function searchTable() {
+            let input, filter, table, tr, td1, td2, i, txtValue1, txtValue2;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("contractTable");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 1; i < tr.length; i++) {
+                td1 = tr[i].getElementsByTagName("td")[1]; // 계약체결 업체
+                td2 = tr[i].getElementsByTagName("td")[2]; // 계약명
+                if (td1 || td2) {
+                    txtValue1 = td1 ? td1.textContent || td1.innerText : "";
+                    txtValue2 = td2 ? td2.textContent || td2.innerText : "";
+                    if (txtValue1.toUpperCase().indexOf(filter) > -1 || txtValue2.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+    </head>
+    <body>
+
+    <h2>IMC 계약서 리스트</h2>
+    <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="계약체결 업체 또는 계약명을 검색하세요">
+
+    <table id="contractTable">
+    <tr>
+        <th>No.</th>
+        <th>계약체결 업체</th>
+        <th>계약명</th>
+        <th>상세보기</th>
+    </tr>
+    
+        <tr>
+            <td>1</td>
+            <td>강릉영동대학교</td>
+            <td>서비스 공급 계약서(메시징 서비스)</td>
+            <td><button onclick="openPopup('popup0')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup0" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup0')">&times;</span>
+                <p><b>계약일자:</b> 2019-01-01</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.3</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> 80.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 14.0</p><p><b>친구톡I:</b> 20.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>2</td>
+            <td>광동제약㈜</td>
+            <td>휴머스온 메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup1')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup1" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup1')">&times;</span>
+                <p><b>계약일자:</b> 2021-06-30</p><p><b>계약시작일:</b> 2021-06-30</p><p><b>계약종료일:</b> 2022-06-29</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> 19.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>3</td>
+            <td>국가평생교육진흥원</td>
+            <td>용역계약서(2024년 상반지 학점은행제,독학학위제 문자 및 알림톡 메시지 서비스 용역)</td>
+            <td><button onclick="openPopup('popup2')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup2" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup2')">&times;</span>
+                <p><b>계약일자:</b> 2023-12-13</p><p><b>계약시작일:</b> 2024-01-01</p><p><b>계약종료일:</b> 2024-06-30</p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.5</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>4</td>
+            <td>국군의무사령부</td>
+            <td>서비스 공급 계약서(메시징 서비스)</td>
+            <td><button onclick="openPopup('popup3')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup3" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup3')">&times;</span>
+                <p><b>계약일자:</b> 2021-02-08</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 17.0</p><p><b>LMS:</b> 40.0</p><p><b>MMS:</b> 150.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>5</td>
+            <td>근로복지공단</td>
+            <td>수의계약 체결 제한 여부 확인서,용역이행 승낙서(카카오톡 알림톡 및 문자서비스 이용)</td>
+            <td><button onclick="openPopup('popup4')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup4" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup4')">&times;</span>
+                <p><b>계약일자:</b> 2024-11-25</p><p><b>계약시작일:</b> 2025-01-01</p><p><b>계약종료일:</b> 2025-12-31</p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.7</p><p><b>LMS:</b> 24.5</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.0~5.2</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>6</td>
+            <td>던롭 스포츠코리아 주식회사</td>
+            <td>알림톡 서비스 이용약관</td>
+            <td><button onclick="openPopup('popup5')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup5" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup5')">&times;</span>
+                <p><b>계약일자:</b> 2017-01-25</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.6</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.6~7</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>7</td>
+            <td>롯데렌탈 주식회사</td>
+            <td>휴머스온 메시지 서비스 이용계약서</td>
+            <td><button onclick="openPopup('popup6')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup6" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup6')">&times;</span>
+                <p><b>계약일자:</b> 2022-10-18</p><p><b>계약시작일:</b> 2022-10-18</p><p><b>계약종료일:</b> 2023-10-17</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.2</p><p><b>LMS:</b> 24.5</p><p><b>MMS:</b> 72.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.3</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>8</td>
+            <td>마일로</td>
+            <td>휴머스온 메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup7')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup7" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup7')">&times;</span>
+                <p><b>계약일자:</b> 2021-10-06</p><p><b>계약시작일:</b> 2021-10-06</p><p><b>계약종료일:</b> 2022-10-05</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.2~4.8</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>9</td>
+            <td>매일유업㈜</td>
+            <td>계약변경합의서(UMS 서비스 계약)</td>
+            <td><button onclick="openPopup('popup8')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup8" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup8')">&times;</span>
+                <p><b>계약일자:</b> 2019-09-08</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.5</p><p><b>LMS:</b> 24.7</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>10</td>
+            <td>본아이에프</td>
+            <td>계약변경합의서(통합메시징 TMS 솔루션 납품 및 서비스)</td>
+            <td><button onclick="openPopup('popup9')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup9" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup9')">&times;</span>
+                <p><b>계약일자:</b> 2019-10-28</p><p><b>계약시작일:</b> 2019-10-28</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 27.0</p><p><b>MMS:</b> 70.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 결합계약</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>11</td>
+            <td>상하농원 유한회사</td>
+            <td>알림톡 서비스 계약서</td>
+            <td><button onclick="openPopup('popup10')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup10" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup10')">&times;</span>
+                <p><b>계약일자:</b> 2018-07-02</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.5</p><p><b>LMS:</b> 24.7</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.8~6.0</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>12</td>
+            <td>세방㈜</td>
+            <td>카카오톡 비즈메시지 이용계약</td>
+            <td><button onclick="openPopup('popup11')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup11" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup11')">&times;</span>
+                <p><b>계약일자:</b> 2017-12-20</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 10~60만원</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 10.0</p><p><b>LMS:</b> 30.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 20.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 매월 기본료 과금</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>13</td>
+            <td>아이맥스소프트㈜</td>
+            <td>휴머스온 메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup12')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup12" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup12')">&times;</span>
+                <p><b>계약일자:</b> 2021-09-28</p><p><b>계약시작일:</b> 2021-09-28</p><p><b>계약종료일:</b> 2022-09-27</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.5</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>14</td>
+            <td>에스비아이코스머니㈜</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup13')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup13" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup13')">&times;</span>
+                <p><b>계약일자:</b> 2020-10-06</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 24.5</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> 19.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>15</td>
+            <td>에스케이스토아주식회사</td>
+            <td>휴머스온 메시지 서비스 이용 계약서(친구톡 발송 서비스 계약 건)</td>
+            <td><button onclick="openPopup('popup14')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup14" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup14')">&times;</span>
+                <p><b>계약일자:</b> 2021-09-27</p><p><b>계약시작일:</b> 2021-09-27</p><p><b>계약종료일:</b> 2022-09-26</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> 19.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>16</td>
+            <td>에스케이스토아주식회사</td>
+            <td>휴머스온 메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup15')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup15" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup15')">&times;</span>
+                <p><b>계약일자:</b> 2021-03-01</p><p><b>계약시작일:</b> 2021-03-01</p><p><b>계약종료일:</b> 2022-02-28</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5~4.8</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>17</td>
+            <td>연세대학교</td>
+            <td>휴머스온 메시지 서비스 이용계약서</td>
+            <td><button onclick="openPopup('popup16')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup16" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup16')">&times;</span>
+                <p><b>계약일자:</b> 2022-07-07</p><p><b>계약시작일:</b> 2022-07-07</p><p><b>계약종료일:</b> 2023-07-06</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.8</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>18</td>
+            <td>와디즈 주식회사</td>
+            <td>메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup17')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup17" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup17')">&times;</span>
+                <p><b>계약일자:</b> 2023-01-16</p><p><b>계약시작일:</b> 2023-02-01</p><p><b>계약종료일:</b> 2024-01-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.2</p><p><b>LMS:</b> 23.0</p><p><b>MMS:</b> 49.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 3.9</p><p><b>친구톡T:</b> 9.3</p><p><b>친구톡I:</b> 16.0</p><p><b>친구톡W:</b> 17.3</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>19</td>
+            <td>울산대학교</td>
+            <td>에이메일 ASP 서비스 계약서</td>
+            <td><button onclick="openPopup('popup18')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup18" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup18')">&times;</span>
+                <p><b>계약일자:</b> 2012-12-12</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 12.0</p><p><b>LMS:</b> 32.0</p><p><b>MMS:</b> 110.0</p><p><b>대행료:</b> 30000.0</p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>20</td>
+            <td>유안타증권㈜</td>
+            <td>메시징 서비스 공급 계약서</td>
+            <td><button onclick="openPopup('popup19')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup19" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup19')">&times;</span>
+                <p><b>계약일자:</b> 2021-04-09</p><p><b>계약시작일:</b> 2021-04-09</p><p><b>계약종료일:</b> 2022-04-08</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 23.8</p><p><b>MMS:</b> 54.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.3</p><p><b>친구톡T:</b> 10.8</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>21</td>
+            <td>이지앤웰니스㈜</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup20')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup20" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup20')">&times;</span>
+                <p><b>계약일자:</b> 2020-10-26</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>22</td>
+            <td>자두소프트</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup21')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup21" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup21')">&times;</span>
+                <p><b>계약일자:</b> 2020-03-25</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.5</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>23</td>
+            <td>조아기프트 주식회사</td>
+            <td>카카오톡 비즈메시지 이용계약</td>
+            <td><button onclick="openPopup('popup22')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup22" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup22')">&times;</span>
+                <p><b>계약일자:</b> 2017-06-19</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 10~60만원</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 10.0</p><p><b>LMS:</b> 30.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 20.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>24</td>
+            <td>㈜내쇼날모터스</td>
+            <td>TMS시스템 개발 및 서비스 계약서</td>
+            <td><button onclick="openPopup('popup23')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup23" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup23')">&times;</span>
+                <p><b>계약일자:</b> 2019-06-27</p><p><b>계약시작일:</b> 2019-07-01</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 15.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>25</td>
+            <td>㈜누리빌</td>
+            <td>서비스 공급 계약서(메시징 서비스)</td>
+            <td><button onclick="openPopup('popup24')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup24" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup24')">&times;</span>
+                <p><b>계약일자:</b> 2018-08-29</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 16.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>26</td>
+            <td>㈜대한항공</td>
+            <td>메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup25')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup25" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup25')">&times;</span>
+                <p><b>계약일자:</b> 2023-06-30</p><p><b>계약시작일:</b> 2023-07-01</p><p><b>계약종료일:</b> 2026-06-30</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 23.8</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> 1.0</p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>27</td>
+            <td>㈜더클래스효성</td>
+            <td>알림톡 서비스 이용약관</td>
+            <td><button onclick="openPopup('popup26')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup26" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup26')">&times;</span>
+                <p><b>계약일자:</b> 2016-11-01</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.6</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.6~7</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>28</td>
+            <td>㈜도이치모터스</td>
+            <td>TMS시스템 개발 및 서비스 계약서</td>
+            <td><button onclick="openPopup('popup27')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup27" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup27')">&times;</span>
+                <p><b>계약일자:</b> 2019-09-30</p><p><b>계약시작일:</b> 2019-10-01</p><p><b>계약종료일:</b> 2022-09-30</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 15.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>29</td>
+            <td>㈜동성모터스</td>
+            <td>TMS시스템 개발 및 서비스 계약서</td>
+            <td><button onclick="openPopup('popup28')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup28" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup28')">&times;</span>
+                <p><b>계약일자:</b> 2019-06-27</p><p><b>계약시작일:</b> 2019-08-01</p><p><b>계약종료일:</b> 2022-07-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 15.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>30</td>
+            <td>㈜디지털팜</td>
+            <td>메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup29')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup29" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup29')">&times;</span>
+                <p><b>계약일자:</b> 2023-09-01</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 10.0</p><p><b>친구톡I:</b> 16.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>31</td>
+            <td>㈜락소홀딩스</td>
+            <td>서비스 공급 계약서(메시징 서비스)</td>
+            <td><button onclick="openPopup('popup30')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup30" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup30')">&times;</span>
+                <p><b>계약일자:</b> 2018-06-21</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 20.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>32</td>
+            <td>㈜리싸이클파크</td>
+            <td>알림톡 서비스 이용약관</td>
+            <td><button onclick="openPopup('popup31')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup31" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup31')">&times;</span>
+                <p><b>계약일자:</b> 2016-08-04</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 30000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.6</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.8~7</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>33</td>
+            <td>㈜메디에이지</td>
+            <td>계약변경합의서[서비스 공급 계약서(메시징 서비스)]</td>
+            <td><button onclick="openPopup('popup32')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup32" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup32')">&times;</span>
+                <p><b>계약일자:</b> 2022-06-30</p><p><b>계약시작일:</b> 2022-07-01</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.8</p><p><b>LMS:</b> 27.0</p><p><b>MMS:</b> 50.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.5</p><p><b>친구톡T:</b> 10.0</p><p><b>친구톡I:</b> 20.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>34</td>
+            <td>㈜바바리안모터스</td>
+            <td>TMS시스템 개발 및 서비스 계약서</td>
+            <td><button onclick="openPopup('popup33')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup33" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup33')">&times;</span>
+                <p><b>계약일자:</b> 2019-09-30</p><p><b>계약시작일:</b> 2019-10-01</p><p><b>계약종료일:</b> 2022-09-30</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 15.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>35</td>
+            <td>㈜삼천리모터스</td>
+            <td>TMS시스템 개발 및 서비스 계약서</td>
+            <td><button onclick="openPopup('popup34')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup34" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup34')">&times;</span>
+                <p><b>계약일자:</b> 2019-06-27</p><p><b>계약시작일:</b> 2019-08-01</p><p><b>계약종료일:</b> 2022-07-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 15.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>36</td>
+            <td>㈜서한사</td>
+            <td>휴머스온 메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup35')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup35" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup35')">&times;</span>
+                <p><b>계약일자:</b> 2021-04-05</p><p><b>계약시작일:</b> 2021-04-02</p><p><b>계약종료일:</b> 2022-04-04</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.4</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 소액 / 정산이슈 / 보류</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>37</td>
+            <td>㈜스마일게이트알피지</td>
+            <td>메시징 서비스 제공 계약서</td>
+            <td><button onclick="openPopup('popup36')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup36" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup36')">&times;</span>
+                <p><b>계약일자:</b> 2018-09-01</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.8</p><p><b>친구톡T:</b> 10.0</p><p><b>친구톡I:</b> 16.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>38</td>
+            <td>㈜스마트레이저</td>
+            <td>계약변경합의서(메시징 서비스 공급 계약)</td>
+            <td><button onclick="openPopup('popup37')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup37" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup37')">&times;</span>
+                <p><b>계약일자:</b> 2021-10-26</p><p><b>계약시작일:</b> 2021-10-26</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 10.0</p><p><b>LMS:</b> 30.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 14.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>39</td>
+            <td>㈜스포츠토토코리아</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup38')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup38" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup38')">&times;</span>
+                <p><b>계약일자:</b> 2020-07-01</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.5</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>40</td>
+            <td>㈜신영증권</td>
+            <td>메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup39')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup39" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup39')">&times;</span>
+                <p><b>계약일자:</b> 2023-04-10</p><p><b>계약시작일:</b> 2023-04-10</p><p><b>계약종료일:</b> 2024-04-09</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> 무료</p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> 33.0</p><p><b>SMS:</b> 8.3</p><p><b>LMS:</b> 25.3</p><p><b>MMS:</b> 60.5</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.6</p><p><b>친구톡T:</b> 13.2</p><p><b>친구톡I:</b> 19.8</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>41</td>
+            <td>㈜썸에이지</td>
+            <td>계약변경합의서(서비스 공급 계약서_메시징 서비스)</td>
+            <td><button onclick="openPopup('popup40')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup40" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup40')">&times;</span>
+                <p><b>계약일자:</b> 2020-04-09</p><p><b>계약시작일:</b> 2020-05-01</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 27.0</p><p><b>MMS:</b> 70.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.5</p><p><b>친구톡T:</b> 14.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 매월 기본료 과금</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>42</td>
+            <td>㈜씨알에스코리아</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup41')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup41" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup41')">&times;</span>
+                <p><b>계약일자:</b> 2020-06-29</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.8</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.2~6.0</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>43</td>
+            <td>씨에스이노베이션㈜</td>
+            <td>카카오톡 비즈메시지 이용계약</td>
+            <td><button onclick="openPopup('popup42')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup42" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup42')">&times;</span>
+                <p><b>계약일자:</b> 2017-11-08</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 10~60만원</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 10.0</p><p><b>LMS:</b> 30.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 20.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>44</td>
+            <td>㈜아이스크림에듀</td>
+            <td>계약변경합의서(TMS e TMSp,문자,알림톡 결합상품 계약)</td>
+            <td><button onclick="openPopup('popup43')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup43" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup43')">&times;</span>
+                <p><b>계약일자:</b> 2020-03-01</p><p><b>계약시작일:</b> 2020-03-01</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 기 계약서 없음</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.3</p><p><b>LMS:</b> 23.7</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>45</td>
+            <td>㈜아이엠시티                   </td>
+            <td>Humuson Alimtalk Service 이용약관</td>
+            <td><button onclick="openPopup('popup44')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup44" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup44')">&times;</span>
+                <p><b>계약일자:</b> 2016-08-10</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.9</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>46</td>
+            <td>㈜아이엠폼</td>
+            <td>계약변경합의서(서비스 공급 계약서_메시징 서비스)</td>
+            <td><button onclick="openPopup('popup45')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup45" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup45')">&times;</span>
+                <p><b>계약일자:</b> 2022-12-26</p><p><b>계약시작일:</b> 2023-01-01</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.5</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.8</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> 19.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>47</td>
+            <td>㈜아트만파트너스</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup46')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup46" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup46')">&times;</span>
+                <p><b>계약일자:</b> 2020-01-31</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 27.0</p><p><b>MMS:</b> 70.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>48</td>
+            <td>㈜에이베리시스템</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup47')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup47" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup47')">&times;</span>
+                <p><b>계약일자:</b> 2020-08-12</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.5</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> 19.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 매월 기본료 과금</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>49</td>
+            <td>㈜에이스침대</td>
+            <td>계약변경합의서(카카오톡 비즈메시지 이용약관 계약)</td>
+            <td><button onclick="openPopup('popup48')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup48" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup48')">&times;</span>
+                <p><b>계약일자:</b> 2020-07-28</p><p><b>계약시작일:</b> 2020-08-01</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.3</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>50</td>
+            <td>㈜에잇퍼센트</td>
+            <td>알림톡 서비스 이용약관</td>
+            <td><button onclick="openPopup('popup49')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup49" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup49')">&times;</span>
+                <p><b>계약일자:</b> 2017-01-19</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.6</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.4~6.8</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>51</td>
+            <td>㈜엑스엘게임즈</td>
+            <td>TMS Cloud 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup50')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup50" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup50')">&times;</span>
+                <p><b>계약일자:</b> 2024-01-01</p><p><b>계약시작일:</b> 2024-01-01</p><p><b>계약종료일:</b> 2026-12-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> 1</p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.5</p><p><b>LMS:</b> 24.7</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 24년 TMS Cloud 계약 후 기본료 과금하지 않는 것으로 협의</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>52</td>
+            <td>㈜엔프라니</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup51')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup51" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup51')">&times;</span>
+                <p><b>계약일자:</b> 2019-10-31</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.2</p><p><b>LMS:</b> 24.5</p><p><b>MMS:</b> 58.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 13.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>53</td>
+            <td>㈜엠에이치앤코</td>
+            <td>메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup52')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup52" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup52')">&times;</span>
+                <p><b>계약일자:</b> 2023-01-02</p><p><b>계약시작일:</b> 2023-02-01</p><p><b>계약종료일:</b> 2024-01-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 24.8</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.8</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 16.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 모던하우스</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>54</td>
+            <td>㈜오라인포</td>
+            <td>계약변경합의서(서비스 공급 계약서_메시징 서비스)</td>
+            <td><button onclick="openPopup('popup53')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup53" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup53')">&times;</span>
+                <p><b>계약일자:</b> 2020-01-02</p><p><b>계약시작일:</b> 2020-01-02</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 69.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>55</td>
+            <td>㈜오에스비저축은행</td>
+            <td>휴머스온 메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup54')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup54" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup54')">&times;</span>
+                <p><b>계약일자:</b> 2021-10-20</p><p><b>계약시작일:</b> 2021-11-01</p><p><b>계약종료일:</b> 2022-10-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.5</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.8</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>56</td>
+            <td>㈜오토위니</td>
+            <td>UMS서비스 계약서</td>
+            <td><button onclick="openPopup('popup55')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup55" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup55')">&times;</span>
+                <p><b>계약일자:</b> 2017-05-25</p><p><b>계약시작일:</b> 2017-05-25</p><p><b>계약종료일:</b> 2018-05-24</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> 50000.0</p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 11.0</p><p><b>LMS:</b> 30.0</p><p><b>MMS:</b> 90.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>57</td>
+            <td>㈜오토핸즈</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup56')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup56" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup56')">&times;</span>
+                <p><b>계약일자:</b> 2019-10-29</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 20.0</p><p><b>LMS:</b> 40.0</p><p><b>MMS:</b> 150.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 7</p><p><b>친구톡T:</b> 13.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>58</td>
+            <td>㈜월급날</td>
+            <td>카카오톡 비즈메시지 이용계약</td>
+            <td><button onclick="openPopup('popup57')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup57" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup57')">&times;</span>
+                <p><b>계약일자:</b> 2017-05-25</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 20~60만원</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.6</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.0~6.8</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>59</td>
+            <td>㈜유베스타</td>
+            <td>서비스 공급 계약서(메시징 서비스)</td>
+            <td><button onclick="openPopup('popup58')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup58" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup58')">&times;</span>
+                <p><b>계약일자:</b> 2019-05-03</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 69.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 8</p><p><b>친구톡T:</b> 14.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>60</td>
+            <td>㈜이나인페이</td>
+            <td>서비스 공급 계약서 (주)이나인페이 ASP서비스)</td>
+            <td><button onclick="openPopup('popup59')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup59" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup59')">&times;</span>
+                <p><b>계약일자:</b> 2017-11-23</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.3</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> 80.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>61</td>
+            <td>㈜이든앤앨리스마케팅</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup60')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup60" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup60')">&times;</span>
+                <p><b>계약일자:</b> 2020-01-10</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.5</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>62</td>
+            <td>㈜인스프랜드</td>
+            <td>서비스 공급 계약서(메시징 서비스)</td>
+            <td><button onclick="openPopup('popup61')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup61" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup61')">&times;</span>
+                <p><b>계약일자:</b> 2019-01-08</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 195000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 27.0</p><p><b>MMS:</b> 70.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.5</p><p><b>친구톡T:</b> 14.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 매월 기본료 과금</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>63</td>
+            <td>㈜인터엠디컴퍼니</td>
+            <td>휴머스온 메시지 서비스 이용계약서</td>
+            <td><button onclick="openPopup('popup62')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup62" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup62')">&times;</span>
+                <p><b>계약일자:</b> 2022-05-27</p><p><b>계약시작일:</b> 2022-02-21</p><p><b>계약종료일:</b> 2023-02-20</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>64</td>
+            <td>㈜자영업자</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup63')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup63" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup63')">&times;</span>
+                <p><b>계약일자:</b> 2020-06-01</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 3.8~4.2</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> 19.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>65</td>
+            <td>㈜제로투세븐</td>
+            <td>카카오톡 비즈메시지 이용계약</td>
+            <td><button onclick="openPopup('popup64')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup64" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup64')">&times;</span>
+                <p><b>계약일자:</b> 2017-07-04</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 20~60만원</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.6</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.0~6.8</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 매월 080수신거부 서비스 금액(매일유업) 39,430원 세금계산서 발행</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>66</td>
+            <td>㈜제이씨현오토</td>
+            <td>서비스 공급 계약서(메시징 서비스)</td>
+            <td><button onclick="openPopup('popup65')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup65" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup65')">&times;</span>
+                <p><b>계약일자:</b> 2019-06-01</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 195000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 27.0</p><p><b>MMS:</b> 70.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.5</p><p><b>친구톡T:</b> 14.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 매월 기본료 과금</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>67</td>
+            <td>㈜제주항공</td>
+            <td>메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup66')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup66" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup66')">&times;</span>
+                <p><b>계약일자:</b> 2023-11-07</p><p><b>계약시작일:</b> 2023-07-29</p><p><b>계약종료일:</b> 2025-07-28</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.2</p><p><b>LMS:</b> 23.5</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>68</td>
+            <td>㈜지에스리테일</td>
+            <td>휴머스온 메시지 서비스 이용계약서</td>
+            <td><button onclick="openPopup('popup67')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup67" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup67')">&times;</span>
+                <p><b>계약일자:</b> 2022-02-09</p><p><b>계약시작일:</b> 2022-02-14</p><p><b>계약종료일:</b> 2023-02-13</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> 9.8</p><p><b>친구톡I:</b> 15.8</p><p><b>친구톡W:</b> 17.8</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>69</td>
+            <td>㈜지에스엠비즈</td>
+            <td>서비스 공급 계약서 (주)GS엠비즈 ASP서비스)</td>
+            <td><button onclick="openPopup('popup68')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup68" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup68')">&times;</span>
+                <p><b>계약일자:</b> 2017-12-26</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.7</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.8</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>70</td>
+            <td>㈜창의와탐구</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup69')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup69" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup69')">&times;</span>
+                <p><b>계약일자:</b> 2020-05-25</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.5</p><p><b>LMS:</b> 23.0</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>71</td>
+            <td>㈜코엑스</td>
+            <td>계약변경합의서(문자/알림톡 메세징 서비스 공급 계약)</td>
+            <td><button onclick="openPopup('popup70')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup70" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup70')">&times;</span>
+                <p><b>계약일자:</b> 2019-10-30</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 50000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.5</p><p><b>LMS:</b> 28.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.5</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>72</td>
+            <td>㈜코오롱모터스</td>
+            <td>TMS시스템 개발 및 서비스 계약서</td>
+            <td><button onclick="openPopup('popup71')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup71" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup71')">&times;</span>
+                <p><b>계약일자:</b> 2019-06-27</p><p><b>계약시작일:</b> 2019-08-01</p><p><b>계약종료일:</b> 2022-07-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 15.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>73</td>
+            <td>㈜탈잉</td>
+            <td>카카오톡 비즈메시지 이용계약</td>
+            <td><button onclick="openPopup('popup72')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup72" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup72')">&times;</span>
+                <p><b>계약일자:</b> 2017-10-13</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 10~60만원</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 10.0</p><p><b>LMS:</b> 30.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 20.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>74</td>
+            <td>㈜파리크라상</td>
+            <td>휴머스온 메시지 서비스 이용 계약서 (갱신계약 진행중)</td>
+            <td><button onclick="openPopup('popup73')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup73" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup73')">&times;</span>
+                <p><b>계약일자:</b> 2021-12-28</p><p><b>계약시작일:</b> 2024-10-12</p><p><b>계약종료일:</b> 2025-10-12</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.5</p><p><b>LMS:</b> 23.5</p><p><b>MMS:</b> 50.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.3</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>75</td>
+            <td>㈜피유엠피</td>
+            <td>계약변경합의서(서비스 공급 계약서_메시징 서비스)</td>
+            <td><button onclick="openPopup('popup74')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup74" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup74')">&times;</span>
+                <p><b>계약일자:</b> 2021-02-19</p><p><b>계약시작일:</b> 2021-02-19</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 3.8~4.2</p><p><b>친구톡T:</b> 10.0</p><p><b>친구톡I:</b> 16.0</p><p><b>친구톡W:</b> 18.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>76</td>
+            <td>㈜하나투어</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup75')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup75" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup75')">&times;</span>
+                <p><b>계약일자:</b> 2020-08-28</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.5</p><p><b>LMS:</b> 25.5</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.2</p><p><b>친구톡T:</b> 10.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>77</td>
+            <td>㈜한독모터스</td>
+            <td>TMS시스템 개발 및 서비스 계약서</td>
+            <td><button onclick="openPopup('popup76')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup76" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup76')">&times;</span>
+                <p><b>계약일자:</b> 2019-06-24</p><p><b>계약시작일:</b> 2019-08-01</p><p><b>계약종료일:</b> 2022-07-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 15.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>78</td>
+            <td>㈜핫시즈너</td>
+            <td>메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup77')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup77" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup77')">&times;</span>
+                <p><b>계약일자:</b> 2024-04-30</p><p><b>계약시작일:</b> 2024-05-01</p><p><b>계약종료일:</b> 2025-04-30</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.8</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> 70.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 14.0</p><p><b>친구톡I:</b> 20.0</p><p><b>친구톡W:</b> 25.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>79</td>
+            <td>㈜햇터라이프</td>
+            <td>서비스 공급 계약서(메시징 서비스)</td>
+            <td><button onclick="openPopup('popup78')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup78" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup78')">&times;</span>
+                <p><b>계약일자:</b> </p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 10.0</p><p><b>LMS:</b> 28.0</p><p><b>MMS:</b> 80.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 14.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>80</td>
+            <td>코나아이㈜</td>
+            <td>계약변경합의서(국제문자 서비스 및 비용 추가)</td>
+            <td><button onclick="openPopup('popup79')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup79" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup79')">&times;</span>
+                <p><b>계약일자:</b> 2024-02-05</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 기 계약서 없음</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.5</p><p><b>LMS:</b> 24.3</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.2</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>81</td>
+            <td>코어빌더</td>
+            <td>서비스 공급 계약서(메시징 서비스)</td>
+            <td><button onclick="openPopup('popup80')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup80" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup80')">&times;</span>
+                <p><b>계약일자:</b> 2018-07-16</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 27.0</p><p><b>MMS:</b> 70.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 14.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>82</td>
+            <td>태림포장 주식회사</td>
+            <td>휴머스온 메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup81')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup81" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup81')">&times;</span>
+                <p><b>계약일자:</b> 2021-11-15</p><p><b>계약시작일:</b> 2021-11-15</p><p><b>계약종료일:</b> 2023-11-14</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> 50000.0</p><p><b>비고:</b> 소액사용 / 보류 / 리셀러</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>83</td>
+            <td>티비더블유에이 코리아 주식회사</td>
+            <td>휴머스온 메시지 서비스 이용계약서</td>
+            <td><button onclick="openPopup('popup82')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup82" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup82')">&times;</span>
+                <p><b>계약일자:</b> 2022-03-30</p><p><b>계약시작일:</b> 2022-03-30</p><p><b>계약종료일:</b> 2023-03-29</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.5</p><p><b>LMS:</b> 28.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> TMS Cloud / BMW </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>84</td>
+            <td>한국전기공사협회</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup83')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup83" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup83')">&times;</span>
+                <p><b>계약일자:</b> 2020-12-14</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> 45.5</p><p><b>SMS:</b> 9.5</p><p><b>LMS:</b> 27.0</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>85</td>
+            <td>한국포스증권(우리투자증권)</td>
+            <td>계약 변경 합의서 (기업형 메시징 서비스 계약서)</td>
+            <td><button onclick="openPopup('popup84')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup84" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup84')">&times;</span>
+                <p><b>계약일자:</b> 2021-12-31</p><p><b>계약시작일:</b> 2022-01-01</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 기 계약서 없음</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.5</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> 49.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 3.6</p><p><b>친구톡T:</b> 10.0</p><p><b>친구톡I:</b> 16.0</p><p><b>친구톡W:</b> 19.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 개인정보 위수탁 별도 체결하지 않았음</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>86</td>
+            <td>한국표준협회</td>
+            <td>토탈마케팅서버(TMS) 문자메시지 서비스 이용</td>
+            <td><button onclick="openPopup('popup85')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup85" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup85')">&times;</span>
+                <p><b>계약일자:</b> 2021-08-31</p><p><b>계약시작일:</b> 2021-08-31</p><p><b>계약종료일:</b> 2022-08-30</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 27.0</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>87</td>
+            <td>한국피자헛유한회사</td>
+            <td>메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup86')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup86" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup86')">&times;</span>
+                <p><b>계약일자:</b> 2023-09-01</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.0~4.2</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>88</td>
+            <td>한화갤러리아 주식회사</td>
+            <td>메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup87')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup87" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup87')">&times;</span>
+                <p><b>계약일자:</b> 2025-01-13</p><p><b>계약시작일:</b> 2025-02-01</p><p><b>계약종료일:</b> 2026-01-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 23.7</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> SMS,LMS 단가인하 (2025년도 계약)</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>89</td>
+            <td>효산의료재단 지샘병원</td>
+            <td>메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup88')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup88" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup88')">&times;</span>
+                <p><b>계약일자:</b> 2023-08-22</p><p><b>계약시작일:</b> 2023-09-01</p><p><b>계약종료일:</b> 2025-08-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.7</p><p><b>LMS:</b> 27.0</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>90</td>
+            <td>㈜현대백화점면세점(현대디에프)</td>
+            <td>계약 변경 합의서(ASP서비스 계약서)</td>
+            <td><button onclick="openPopup('popup89')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup89" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup89')">&times;</span>
+                <p><b>계약일자:</b> 2024-12-12</p><p><b>계약시작일:</b> 2025-01-01</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.2</p><p><b>LMS:</b> 24.5</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.4</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>91</td>
+            <td>케어랩스_포항성모병원</td>
+            <td>공간소프트 계약서</td>
+            <td><button onclick="openPopup('popup90')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup90" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup90')">&times;</span>
+                <p><b>계약일자:</b> 2019-03-29</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.7</p><p><b>LMS:</b> 27.0</p><p><b>MMS:</b> 100.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 공간소프트에서 케어랩스로 합병 됨(2024.01.12)</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>92</td>
+            <td>케어랩스_에이치플러스양지병원</td>
+            <td>공간소프트 계약서</td>
+            <td><button onclick="openPopup('popup91')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup91" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup91')">&times;</span>
+                <p><b>계약일자:</b> 2020-07-08</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.7</p><p><b>LMS:</b> 27.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 공간소프트에서 케어랩스로 합병 됨(2024.01.12)</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>93</td>
+            <td>삼성물산㈜</td>
+            <td>삼성물산 온/오프라인 문자/알림톡 서비스</td>
+            <td><button onclick="openPopup('popup92')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup92" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup92')">&times;</span>
+                <p><b>계약일자:</b> 2022-10-01</p><p><b>계약시작일:</b> 2022-10-01</p><p><b>계약종료일:</b> 2023-09-30</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.6</p><p><b>LMS:</b> 23.6</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 계약서 단가 (VAT 포함)</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>94</td>
+            <td>로레알코리아(엘오케이)</td>
+            <td>서비스 공급에 관한 기본 약정서</td>
+            <td><button onclick="openPopup('popup93')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup93" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup93')">&times;</span>
+                <p><b>계약일자:</b> 2022-09-23</p><p><b>계약시작일:</b> 2022-10-01</p><p><b>계약종료일:</b> 2023-09-30</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> 월 무상/500만건</p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 24.5</p><p><b>MMS:</b> 54.0</p><p><b>대행료:</b> 4000000.0</p><p><b>알림톡:</b> 4.5</p><p><b>친구톡T:</b> 16.5</p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>95</td>
+            <td>동양생명보험㈜</td>
+            <td>서비스 수행 계약서</td>
+            <td><button onclick="openPopup('popup94')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup94" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup94')">&times;</span>
+                <p><b>계약일자:</b> </p><p><b>계약시작일:</b> 2019-07-01</p><p><b>계약종료일:</b> 2020-06-30</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.4</p><p><b>LMS:</b> 24.5</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.7</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 계약서 단가 (VAT 포함)</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>96</td>
+            <td>한화투자증권 주식회사</td>
+            <td>카카오 알림톡 메시지 서비스 이용계약서</td>
+            <td><button onclick="openPopup('popup95')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup95" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup95')">&times;</span>
+                <p><b>계약일자:</b> 2022-03-31</p><p><b>계약시작일:</b> 2022-04-01</p><p><b>계약종료일:</b> 2024-03-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 계약서 단가 (VAT 포함)</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>97</td>
+            <td>서울문화재단</td>
+            <td>휴머스온 메시지 서비스 이용계약서</td>
+            <td><button onclick="openPopup('popup96')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup96" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup96')">&times;</span>
+                <p><b>계약일자:</b> 2022-10-19</p><p><b>계약시작일:</b> 2022-10-19</p><p><b>계약종료일:</b> 2023-10-18</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 200000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.5</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 매월 기본료 과금</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>98</td>
+            <td>유한회사 상상파트너스투</td>
+            <td>휴머스온 메시지 서비스 이용계약서</td>
+            <td><button onclick="openPopup('popup97')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup97" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup97')">&times;</span>
+                <p><b>계약일자:</b> 2022-05-02</p><p><b>계약시작일:</b> 2022-05-01</p><p><b>계약종료일:</b> 2023-06-26</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> 100000.0</p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.5</p><p><b>LMS:</b> 27.5</p><p><b>MMS:</b> 80.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 매월 기본료 과금</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>99</td>
+            <td>㈜블루트리</td>
+            <td>휴머스온 메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup98')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup98" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup98')">&times;</span>
+                <p><b>계약일자:</b> 2021-08-13</p><p><b>계약시작일:</b> 2021-09-01</p><p><b>계약종료일:</b> 2022-08-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 24.5</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.8</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>100</td>
+            <td>㈜유니베라</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup99')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup99" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup99')">&times;</span>
+                <p><b>계약일자:</b> 2020-03-05</p><p><b>계약시작일:</b> 2020-04-01</p><p><b>계약종료일:</b> 2021-03-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> 5.0</p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 10.5</p><p><b>LMS:</b> 29.0</p><p><b>MMS:</b> 80.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> 19.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 매월 기본료 과금</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>101</td>
+            <td>㈜파르나스호텔</td>
+            <td>대량메일 시스템 개발 계약서</td>
+            <td><button onclick="openPopup('popup100')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup100" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup100')">&times;</span>
+                <p><b>계약일자:</b> 2020-03-16</p><p><b>계약시작일:</b> 2020-03-16</p><p><b>계약종료일:</b> 2020-04-30</p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.5</p><p><b>LMS:</b> 27.5</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>102</td>
+            <td>신세계조선호텔</td>
+            <td>통합메시징 솔루션 납품 및 서비스 계약서</td>
+            <td><button onclick="openPopup('popup101')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup101" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup101')">&times;</span>
+                <p><b>계약일자:</b> 2018-09-27</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.5</p><p><b>LMS:</b> 26.5</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.9</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 결합 계약</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>103</td>
+            <td>㈜더위버크리에이티브</td>
+            <td>카카오톡 비즈메시지 이용계약</td>
+            <td><button onclick="openPopup('popup102')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup102" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup102')">&times;</span>
+                <p><b>계약일자:</b> 2017-11-29</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 10~60만원</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.5</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 문자단가 어드민 기입, 계약서 기입X</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>104</td>
+            <td>㈜디지털다임</td>
+            <td>휴머스온 메시지 서비스 이용계약서</td>
+            <td><button onclick="openPopup('popup103')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup103" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup103')">&times;</span>
+                <p><b>계약일자:</b> 2022-10-01</p><p><b>계약시작일:</b> 2022-10-01</p><p><b>계약종료일:</b> 2023-09-30</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> 53.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.3</p><p><b>친구톡T:</b> 9.5</p><p><b>친구톡I:</b> 16.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 서브웨이 / 어드민: 알림톡 4원, 계약서 4.3원 - 어드민 단가 수정 완료</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>105</td>
+            <td>㈜리앤한</td>
+            <td>TAS 마케팅자동화, 메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup104')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup104" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup104')">&times;</span>
+                <p><b>계약일자:</b> 2021-02-15</p><p><b>계약시작일:</b> 2021-02-15</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> 19.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>106</td>
+            <td>현대오토에버</td>
+            <td>휴머스온 메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup105')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup105" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup105')">&times;</span>
+                <p><b>계약일자:</b> 2021-11-15</p><p><b>계약시작일:</b> 2021-11-15</p><p><b>계약종료일:</b> 2022-11-14</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 24.5</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 현대글로비스</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>107</td>
+            <td>㈜파이베이커리(랩톤소프트)</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup106')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup106" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup106')">&times;</span>
+                <p><b>계약일자:</b> 2020-04-13</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.5</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 유지 / 관계사</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>108</td>
+            <td>극동전선㈜</td>
+            <td>서비스 공급 계약서(메시징 서비스)</td>
+            <td><button onclick="openPopup('popup107')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup107" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup107')">&times;</span>
+                <p><b>계약일자:</b> 2020-03-10</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 12.0</p><p><b>LMS:</b> 35.0</p><p><b>MMS:</b> 120.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 매월 기본료 과금</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>109</td>
+            <td>마하테크</td>
+            <td>카카오톡 비즈메시지 이용계약</td>
+            <td><button onclick="openPopup('popup108')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup108" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup108')">&times;</span>
+                <p><b>계약일자:</b> 2017-12-13</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 10~60만원</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 10.0</p><p><b>LMS:</b> 30.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 20.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 매월 기본료 과금</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>110</td>
+            <td>㈜웍스아웃</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup109')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup109" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup109')">&times;</span>
+                <p><b>계약일자:</b> 2020-06-23</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> 1</p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 15.0</p><p><b>LMS:</b> 35.0</p><p><b>MMS:</b> 120.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>111</td>
+            <td>㈜한국케이블텔레콤</td>
+            <td>알림톡 서비스 이용약관</td>
+            <td><button onclick="openPopup('popup110')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup110" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup110')">&times;</span>
+                <p><b>계약일자:</b> 2016-12-21</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.9</p><p><b>LMS:</b> 24.5</p><p><b>MMS:</b> 80.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.8~5</p><p><b>친구톡T:</b> 10.0</p><p><b>친구톡I:</b> 16.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 서경타니골프앤리조트,KCTV광주방송,금강방송,남인천방송,KCTV제주방송,서경방송 -> 한국케이블텔레콤으로 세금계산서 한꺼번에 발행됨</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>112</td>
+            <td>삼천리이엔지</td>
+            <td>Humuson 알림톡 및 문자 Service 이용약관</td>
+            <td><button onclick="openPopup('popup111')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup111" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup111')">&times;</span>
+                <p><b>계약일자:</b> 2018-04-04</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.5</p><p><b>LMS:</b> 27.5</p><p><b>MMS:</b> 80.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 20.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>113</td>
+            <td>㈜이베스트투자증권</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup112')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup112" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup112')">&times;</span>
+                <p><b>계약일자:</b> 2019-12-05</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5~5.0</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민에는 문자, 친구톡 단가 기입되어 있지만, 계약서에는 없음 - 문자, 친구톡 사용하지 않음</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>114</td>
+            <td>㈜렌탈프랜드</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup113')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup113" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup113')">&times;</span>
+                <p><b>계약일자:</b> 2020-09-14</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.5</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 소액사용 </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>115</td>
+            <td>㈜콤웨어</td>
+            <td>휴머스온 메시지 서비스 이용계약서</td>
+            <td><button onclick="openPopup('popup114')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup114" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup114')">&times;</span>
+                <p><b>계약일자:</b> 2022-04-25</p><p><b>계약시작일:</b> 2022-05-01</p><p><b>계약종료일:</b> 2024-04-30</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.2</p><p><b>LMS:</b> 23.8</p><p><b>MMS:</b> 50.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.3</p><p><b>친구톡T:</b> 10.0</p><p><b>친구톡I:</b> 16.0</p><p><b>친구톡W:</b> 18.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>116</td>
+            <td>㈜뉴인</td>
+            <td>메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup115')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup115" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup115')">&times;</span>
+                <p><b>계약일자:</b> 2024-10-14</p><p><b>계약시작일:</b> 2024-10-18</p><p><b>계약종료일:</b> 2025-10-17</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.5</p><p><b>LMS:</b> 23.5</p><p><b>MMS:</b> 46.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4</p><p><b>친구톡T:</b> 12.5</p><p><b>친구톡I:</b> 18.5</p><p><b>친구톡W:</b> 21.0</p><p><b>친구톡I(캐):</b> 22.5</p><p><b>푸시:</b> </p><p><b>비고:</b> 메시지 발송 단가는 2년 사용 기준(2년 이후 단가 재협의 예정) / 삼성생명_영업점</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>117</td>
+            <td>㈜KB국민카드</td>
+            <td>카카오알림톡 발송 업무 위수탁 계약서</td>
+            <td><button onclick="openPopup('popup116')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup116" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup116')">&times;</span>
+                <p><b>계약일자:</b> 2024-10-28</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 3.7</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>118</td>
+            <td>㈜밀버스</td>
+            <td>메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup117')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup117" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup117')">&times;</span>
+                <p><b>계약일자:</b> 2022-12-26</p><p><b>계약시작일:</b> 2022-12-26</p><p><b>계약종료일:</b> 2023-12-25</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.5</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>119</td>
+            <td>MG손해보험(주)</td>
+            <td>알림톡 서비스 이용약관</td>
+            <td><button onclick="openPopup('popup118')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup118" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup118')">&times;</span>
+                <p><b>계약일자:</b> 2016-08-01</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>120</td>
+            <td>㈜포스코디엑스(전 포스코아이씨티)</td>
+            <td>UMS 서비스 신청서</td>
+            <td><button onclick="openPopup('popup119')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup119" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup119')">&times;</span>
+                <p><b>계약일자:</b> 2018-05-14</p><p><b>계약시작일:</b> 2018-06-01</p><p><b>계약종료일:</b> 2019-05-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 100000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.5</p><p><b>LMS:</b> 27.5</p><p><b>MMS:</b> 80.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>121</td>
+            <td>㈜박차컴퍼니</td>
+            <td>알림톡 서비스 이용약관</td>
+            <td><button onclick="openPopup('popup120')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup120" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup120')">&times;</span>
+                <p><b>계약일자:</b> 2016-07-21</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> </p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>122</td>
+            <td>㈜홈앤쇼핑</td>
+            <td>문자메시지(SMS/LMS/MMS), 카카오톡 비즈메시지(알림톡) 서비스 공급 계약서</td>
+            <td><button onclick="openPopup('popup121')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup121" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup121')">&times;</span>
+                <p><b>계약일자:</b> 2021-01-31</p><p><b>계약시작일:</b> 2021-02-01</p><p><b>계약종료일:</b> 2022-01-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.5</p><p><b>LMS:</b> 24.5</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 3.7~4.3</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 비고란 :  220125 단가변경 2월부터 적용 -> 딘가 변경 계약서는 없음</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>123</td>
+            <td>㈜피케이포유</td>
+            <td>계약변경합의서(서비스 공급 계약서_메시징 서비스)</td>
+            <td><button onclick="openPopup('popup122')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup122" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup122')">&times;</span>
+                <p><b>계약일자:</b> 2021-01-28</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 19.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 친구톡W 어드민 20원 > 계약서 19원 / 소액사용중</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>124</td>
+            <td>㈜엘에스네트웍스</td>
+            <td>Humuson Alimtalk Service 이용약관</td>
+            <td><button onclick="openPopup('popup123')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup123" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup123')">&times;</span>
+                <p><b>계약일자:</b> 2017-05-25</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 알림톡 계약서 10만건 이하 6원만, 어드민 10만건이상 5원 - 월 10만건 이상 사용하지 않음</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>125</td>
+            <td>㈜아이지니</td>
+            <td>서비스 공급 계약서(메시징 서비스)</td>
+            <td><button onclick="openPopup('popup124')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup124" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup124')">&times;</span>
+                <p><b>계약일자:</b> 2018-06-18</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 12.0</p><p><b>LMS:</b> 33.0</p><p><b>MMS:</b> 120.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 LMS 35원 > 계약서 33원</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>126</td>
+            <td>㈜비알뇌교육</td>
+            <td>카카오톡 비즈메시지 이용계약</td>
+            <td><button onclick="openPopup('popup125')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup125" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup125')">&times;</span>
+                <p><b>계약일자:</b> 2017-06-14</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 10~60만원</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.6</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.0~6.8</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 매월 기본료 과금 / 기본료구간 6만건초과~10만건이하 어드민 50만원 < 계약서 60만원</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>127</td>
+            <td>지반토스 유한회사(WS오디올로지WS Audiology)</td>
+            <td>알림톡 서비스 이용약관</td>
+            <td><button onclick="openPopup('popup126')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup126" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup126')">&times;</span>
+                <p><b>계약일자:</b> 2016-08-30</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 계약서 내 단가X / 매월 기본료 과금</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>128</td>
+            <td>㈜아이큐브온 (구.쉬폰코퍼레이션코리아)</td>
+            <td>서비스 공급 계약서 (메시징 서비스)</td>
+            <td><button onclick="openPopup('popup127')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup127" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup127')">&times;</span>
+                <p><b>계약일자:</b> 2020-09-02</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 3.8~4.2</p><p><b>친구톡T:</b> 10.0</p><p><b>친구톡I:</b> 16.0</p><p><b>친구톡W:</b> 18.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민: 친구톡 13,19,22원(소지바자), 계약서: 10,16,18원(견적가)->계약서 단가로 변경/친구톡 사용안함</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>129</td>
+            <td>유한킴벌리㈜</td>
+            <td>운영 대행 계약서</td>
+            <td><button onclick="openPopup('popup128')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup128" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup128')">&times;</span>
+                <p><b>계약일자:</b> 2025-01-17</p><p><b>계약시작일:</b> 2025-01-07</p><p><b>계약종료일:</b> 2025-12-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 24.5</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> CRM 운영</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>130</td>
+            <td>주식회사 더블유컨셉코리아</td>
+            <td>더블유컨셉코리아 물품 공급 계약서(TMS CLOUD)</td>
+            <td><button onclick="openPopup('popup129')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup129" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup129')">&times;</span>
+                <p><b>계약일자:</b> 2024-12-18</p><p><b>계약시작일:</b> 2025-01-01</p><p><b>계약종료일:</b> 2025-12-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.8</p><p><b>LMS:</b> 23.8</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5</p><p><b>친구톡T:</b> 10.5</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 18.0</p><p><b>친구톡I(캐):</b> 22.0</p><p><b>푸시:</b> </p><p><b>비고:</b> 각 채널별 월 30만건 기준</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>131</td>
+            <td>㈜어메스</td>
+            <td>휴머스온 메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup130')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup130" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup130')">&times;</span>
+                <p><b>계약일자:</b> 2025-01-13</p><p><b>계약시작일:</b> 2025-01-07</p><p><b>계약종료일:</b> 2025-12-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 30000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.6</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.8~7</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 폐차협회 운영대행사 ㈜리싸이클파크에서 ㈜어메스로 변경</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>132</td>
+            <td>페라가모코리아㈜</td>
+            <td>휴머스온 메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup131')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup131" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup131')">&times;</span>
+                <p><b>계약일자:</b> 2025-01-14</p><p><b>계약시작일:</b> 2025-01-15</p><p><b>계약종료일:</b> 2026-01-14</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 50.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5</p><p><b>친구톡T:</b> 11.5</p><p><b>친구톡I:</b> 17.5</p><p><b>친구톡W:</b> 19.5</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 온톡</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>133</td>
+            <td>㈜나라원시스템</td>
+            <td>휴머스온 메시지 서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup132')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup132" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup132')">&times;</span>
+                <p><b>계약일자:</b> 2025-01-01</p><p><b>계약시작일:</b> 2025-01-01</p><p><b>계약종료일:</b> 2025-12-31</p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5</p><p><b>친구톡T:</b> 10.0</p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> 16.0</p><p><b>친구톡I(캐):</b> 18.0</p><p><b>푸시:</b> </p><p><b>비고:</b> TMS 유지보수 원청사인 강남인강 유지보수 업체 상록인강에서 나라원시스템으로 변경</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>134</td>
+            <td>잼팟(천백십일)</td>
+            <td></td>
+            <td><button onclick="openPopup('popup133')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup133" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup133')">&times;</span>
+                <p><b>계약일자:</b> 2019-03-13</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 10.0</p><p><b>LMS:</b> 28.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입 / 결합 계약</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>135</td>
+            <td>레드캡투어</td>
+            <td></td>
+            <td><button onclick="openPopup('popup134')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup134" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup134')">&times;</span>
+                <p><b>계약일자:</b> 2019-07-22</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입 / 결합 계약</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>136</td>
+            <td>신세계면세점</td>
+            <td></td>
+            <td><button onclick="openPopup('popup135')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup135" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup135')">&times;</span>
+                <p><b>계약일자:</b> 2021-01-04</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입 / 결합 계약</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>137</td>
+            <td>㈜더케이커넥트</td>
+            <td>TMS 클라우드 및 운영서비스 이용 계약서</td>
+            <td><button onclick="openPopup('popup136')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup136" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup136')">&times;</span>
+                <p><b>계약일자:</b> 2025-02-28</p><p><b>계약시작일:</b> 2025-03-01</p><p><b>계약종료일:</b> 2026-02-28</p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.3</p><p><b>LMS:</b> 23.0</p><p><b>MMS:</b> 50.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4</p><p><b>친구톡T:</b> 11.5</p><p><b>친구톡I:</b> 19.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> TMS Cloud 월 150만원 / 시스템 운영서비스 월 50만원 / 대행발송서비스 건당 5만원</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>138</td>
+            <td>현대해상화재보험(주)</td>
+            <td></td>
+            <td><button onclick="openPopup('popup137')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup137" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup137')">&times;</span>
+                <p><b>계약일자:</b> 2022-11-30</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.36</p><p><b>LMS:</b> 23.73</p><p><b>MMS:</b> 45.18</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 3.6</p><p><b>친구톡T:</b> 10.0</p><p><b>친구톡I:</b> 16.0</p><p><b>친구톡W:</b> 17.3</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입 / 결합 계약</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>139</td>
+            <td>삼성생명보험(주)</td>
+            <td></td>
+            <td><button onclick="openPopup('popup138')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup138" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup138')">&times;</span>
+                <p><b>계약일자:</b> 2023-07-03</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.2</p><p><b>LMS:</b> 23.2</p><p><b>MMS:</b> 52.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 3.9</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입 / 결합 계약</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>140</td>
+            <td>삼성생명보험(주)_임직원용</td>
+            <td></td>
+            <td><button onclick="openPopup('popup139')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup139" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup139')">&times;</span>
+                <p><b>계약일자:</b> 2023-07-03</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.2</p><p><b>LMS:</b> 23.2</p><p><b>MMS:</b> 52.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입 / 결합 계약</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>141</td>
+            <td>삼성생명_영업점</td>
+            <td></td>
+            <td><button onclick="openPopup('popup140')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup140" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup140')">&times;</span>
+                <p><b>계약일자:</b> 2024-07-19</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입 / 결합 계약</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>142</td>
+            <td>인천대학교</td>
+            <td>2023년도 문자메시지 서비스 공급 계약</td>
+            <td><button onclick="openPopup('popup141')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup141" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup141')">&times;</span>
+                <p><b>계약일자:</b> 2023-03-08</p><p><b>계약시작일:</b> 2023-03-08</p><p><b>계약종료일:</b> 2024-02-29</p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.8</p><p><b>LMS:</b> 25.8</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민에 '6/8 단가 인하 적용' 되었다고 기입되어 있으나 계약서 없음 / 히스토리 찾아봐야함</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>143</td>
+            <td>㈜미리디</td>
+            <td>계약변경합의서 (서비스 추가 및 견적가 변경)</td>
+            <td><button onclick="openPopup('popup142')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup142" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup142')">&times;</span>
+                <p><b>계약일자:</b> 2024-04-22</p><p><b>계약시작일:</b> 2024-05-01</p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> </p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> 10.0</p><p><b>친구톡I:</b> 25.0</p><p><b>친구톡W:</b> 25.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민: 알림톡 6.5원, 계약서: 알림톡 단가X / 계약 체결 필요</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>144</td>
+            <td>㈜인비토</td>
+            <td>부속합의서(단가 변경과 정산 합의)</td>
+            <td><button onclick="openPopup('popup143')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup143" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup143')">&times;</span>
+                <p><b>계약일자:</b> 2024-01-01</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.1</p><p><b>LMS:</b> 22.5</p><p><b>MMS:</b> 44.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 알림톡 어드민 3.7원, 세금계산서 4원 > 계약서: 3.9원</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>145</td>
+            <td>㈜지에이엠지</td>
+            <td>서비스 공급 계약서(메시징 서비스)</td>
+            <td><button onclick="openPopup('popup144')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup144" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup144')">&times;</span>
+                <p><b>계약일자:</b> 2019-03-13</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> 자동연장</p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 195000</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 27.0</p><p><b>MMS:</b> 70.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.5</p><p><b>친구톡T:</b> 14.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 기본료 다름(3만건 이하 어드민 15만원 / 계약서 19.5만원) / 매월 기본료 과금</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>146</td>
+            <td>에스원</td>
+            <td>메시지 발송서비스 이용계약서</td>
+            <td><button onclick="openPopup('popup145')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup145" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup145')">&times;</span>
+                <p><b>계약일자:</b> 2014-12-01</p><p><b>계약시작일:</b> 2015-01-01</p><p><b>계약종료일:</b> 2015-12-31</p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.4</p><p><b>LMS:</b> 25.5</p><p><b>MMS:</b> 97.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 계약일 23/04/01->계약서X 알림톡, 문자 단가 다름</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>147</td>
+            <td>인크루트 주식회사</td>
+            <td>계약서 X</td>
+            <td><button onclick="openPopup('popup146')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup146" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup146')">&times;</span>
+                <p><b>계약일자:</b> 2017-08-18</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 9.0</p><p><b>LMS:</b> 25.0</p><p><b>MMS:</b> 75.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5~6</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>148</td>
+            <td>서울관광재단</td>
+            <td>계약서 X / 6월부 사용량 없음</td>
+            <td><button onclick="openPopup('popup147')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup147" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup147')">&times;</span>
+                <p><b>계약일자:</b> 2020-03-13</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 10.0</p><p><b>LMS:</b> 28.0</p><p><b>MMS:</b> 120.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>149</td>
+            <td>(주)하나저축은행</td>
+            <td>계약서 X / UMS 유지보수 진행중</td>
+            <td><button onclick="openPopup('popup148')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup148" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup148')">&times;</span>
+                <p><b>계약일자:</b> 2020-06-23</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.7</p><p><b>LMS:</b> 26.0</p><p><b>MMS:</b> 65.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.5</p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>150</td>
+            <td>(주)몹스</td>
+            <td>계약서 X</td>
+            <td><button onclick="openPopup('popup149')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup149" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup149')">&times;</span>
+                <p><b>계약일자:</b> 2022-04-08</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 8.0</p><p><b>LMS:</b> 24.5</p><p><b>MMS:</b> 60.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 16.5</p><p><b>친구톡W:</b> 18.5</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>151</td>
+            <td>스마일게이트</td>
+            <td>계약서 X</td>
+            <td><button onclick="openPopup('popup150')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup150" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup150')">&times;</span>
+                <p><b>계약일자:</b> 2024-08-26</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 7.5</p><p><b>LMS:</b> 24.0</p><p><b>MMS:</b> 55.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 4.2</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 18.0</p><p><b>친구톡W:</b> 20.0</p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>152</td>
+            <td>㈜그린벨시스템즈(AJ네트웍스)</td>
+            <td>계약서 X</td>
+            <td><button onclick="openPopup('popup151')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup151" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup151')">&times;</span>
+                <p><b>계약일자:</b> 2016-06-28</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 11.5</p><p><b>LMS:</b> 29.0</p><p><b>MMS:</b> 95.0</p><p><b>대행료:</b> </p><p><b>알림톡:</b> 5.5</p><p><b>친구톡T:</b> 11.0</p><p><b>친구톡I:</b> 17.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>153</td>
+            <td>주식회사 인라이플</td>
+            <td>계약서 X</td>
+            <td><button onclick="openPopup('popup152')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup152" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup152')">&times;</span>
+                <p><b>계약일자:</b> 2017-06-30</p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> 10~60만원</p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 10.0</p><p><b>LMS:</b> 30.0</p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> 6.5</p><p><b>친구톡T:</b> 12.0</p><p><b>친구톡I:</b> 20.0</p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입 / 매월 기본료 과금</p>
+            </div>
+        </div>
+        
+        <tr>
+            <td>154</td>
+            <td>*온누리교회</td>
+            <td>계약서 X</td>
+            <td><button onclick="openPopup('popup153')">상세보기</button></td>
+        </tr>
+        
+        <div id="popup153" class="popup">
+            <div class="popup-content">
+                <span class="close" onclick="closePopup('popup153')">&times;</span>
+                <p><b>계약일자:</b> </p><p><b>계약시작일:</b> </p><p><b>계약종료일:</b> </p><p><b>자동연장여부:</b> </p><p><b>솔루션
+도입유무:</b> </p><p><b>기본료:</b> </p><p><b>최소과금:</b> </p><p><b>대량:</b> </p><p><b>자동:</b> </p><p><b>보안:</b> </p><p><b>템플릿:</b> </p><p><b>FAX:</b> </p><p><b>SMS:</b> 14.0</p><p><b>LMS:</b> </p><p><b>MMS:</b> </p><p><b>대행료:</b> </p><p><b>알림톡:</b> </p><p><b>친구톡T:</b> </p><p><b>친구톡I:</b> </p><p><b>친구톡W:</b> </p><p><b>친구톡I(캐):</b> </p><p><b>푸시:</b> </p><p><b>비고:</b> 어드민 단가 기입 / ASP / 인포뱅크</p>
+            </div>
+        </div>
+        </table></body></html>
